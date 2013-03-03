@@ -51,6 +51,24 @@ public class LoadBalancer implements ConnectionListener {
 		
 		serverConnections.add(sConn);		
 	}
+
+	public void newConnectionOnServer(Connection conn, String user) {
+		for (ServerConnection server: serverConnections) {
+			if (server.getConnection().equals(conn)) {
+				server.newConnectedUser(user);
+				break;
+			}
+		}
+	}
+
+	public void closedConnectionOnServer(Connection conn, String user) {
+		for (ServerConnection server: serverConnections) {
+			if (server.getConnection().equals(conn)) {
+				server.disconnectedUser(user);
+				break;
+			}
+		}
+	}
 	
 	public void authenticateLoadBalancer(Connection conn) {
 		loadBalancerConnections.add(conn);

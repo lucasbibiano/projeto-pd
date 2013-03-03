@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import lb.messages.MessageContext;
 import lb.messages.MessageParser;
-import system.core.User;
 import network.Connection;
 import network.Message;
 import network.MessageListener;
@@ -12,7 +11,7 @@ import network.MessageListener;
 public class ServerConnection implements MessageListener {
 
 	private Connection connection;
-	private ArrayList<User> users;
+	private ArrayList<String> users;
 	private LoadBalancer loadBalancer;
 	private int capacity;
 	
@@ -25,7 +24,7 @@ public class ServerConnection implements MessageListener {
 		this.serverIP = serverIP;
 		this.serverPort = serverPort;
 
-		users = new ArrayList<User>();
+		users = new ArrayList<String>();
 		
 		connection.setMessageListener(this);
 		connection.openConnection();
@@ -39,11 +38,11 @@ public class ServerConnection implements MessageListener {
 		MessageParser.parseMessage(new MessageContext(message, loadBalancer));
 	}
 	
-	public void newConnectedUser(User user) {
+	public void newConnectedUser(String user) {
 		users.add(user);
 	}
 	
-	public void disconnectedUser(User user) {
+	public void disconnectedUser(String user) {
 		users.remove(user);
 	}
 	

@@ -10,6 +10,10 @@ public class MessageParser {
 		chain = new ArrayList<MessageHandler>();
 		chain.add(new NeedServerMessageHandler());
 		chain.add(new RegisterAsServerMessageHandler());
+		chain.add(new RegisterAsLBMessageHandler());
+		chain.add(new NotifyConnectionClosedMessageHandler());
+		chain.add(new NotifyNewConnectionMessageHandler());
+		chain.add(new SendAllActiveServersMessageHandler());
 		//...other handlers
 	}
 	
