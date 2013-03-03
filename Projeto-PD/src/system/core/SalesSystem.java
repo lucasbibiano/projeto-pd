@@ -23,12 +23,12 @@ public class SalesSystem {
 		return instance;
 	}
 	
-	public boolean createUser(String name, String password) {
+	public boolean createUser(String name, String password, boolean encrypt) {
 		if (name.isEmpty()) {
 			return false;
 		}
 		
-		User user = new User(name, Encrypter.encrypt(password));
+		User user = new User(name, encrypt ? Encrypter.encrypt(password) : password);
 
 		if (!users.contains(user)) {
 			users.add(user);

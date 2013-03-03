@@ -18,7 +18,7 @@ public class SignUpMessageHandler implements MessageHandler {
 		
 		String[] params = message.getParams();
 		
-		SalesSystem.getInstance().createUser(params[0], params[1]);
+		SalesSystem.getInstance().createUser(params[0], params[1], true);
 						
 		message.getConnection().sendMessage(new Message("OK", String.valueOf(message.getID())));
 		
