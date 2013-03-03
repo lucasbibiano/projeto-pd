@@ -1,8 +1,6 @@
-package user.messages;
+package lb.messages;
 
 import java.util.ArrayList;
-
-import user.messages.MessageContext;
 
 public class MessageParser {
 	
@@ -10,10 +8,8 @@ public class MessageParser {
 	
 	static {
 		chain = new ArrayList<MessageHandler>();
-		
-		chain.add(new ItemMessageHandler());
-		chain.add(new PrepareReceiveItensHandler());
-		chain.add(new ConnectToMessageHandler());
+		chain.add(new NeedServerMessageHandler());
+		chain.add(new RegisterAsServerMessageHandler());
 		//...other handlers
 	}
 	
@@ -25,3 +21,5 @@ public class MessageParser {
 		}
 	}
 }
+
+//TextArea

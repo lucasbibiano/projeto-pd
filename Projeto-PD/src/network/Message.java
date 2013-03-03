@@ -33,11 +33,11 @@ public class Message implements Serializable{
 		String result = String.valueOf(ID) + ">" + command + "?";
 		
 		for (String s: params){
-			result += s + ":";
+			result += s + "|";
 		}
 		
 		if (params.length == 0) {
-			result += ":";
+			result += "|";
 		}
 				
 		return result;		
@@ -54,7 +54,7 @@ public class Message implements Serializable{
 		split = string.split("\\?");
 		
 		String command = split[0];
-		String[] params = split[1].split("\\:");
+		String[] params = split[1].split("\\|");
 		
 		return new Message(id, command, params);
 	}

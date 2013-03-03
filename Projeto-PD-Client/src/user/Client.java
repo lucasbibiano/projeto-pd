@@ -9,6 +9,7 @@ import network.Connection;
 import network.Message;
 import network.MessageListener;
 import network.TCPConnection;
+import threading.ThreadPoolManager;
 import user.messages.MessageContext;
 import system.core.Item;
 import user.messages.MessageParser;
@@ -19,15 +20,27 @@ public class Client implements MessageListener {
 	private Connection serverConnection;
 	
 	private ArrayList<Integer> waitingConfirmPackets;
-		
+	
+	private ServerAsk ask;
 	
 	public Client() {
 		TextAreaLogger.getInstance().log("Starting client...");
 		waitingConfirmPackets = new ArrayList<Integer>();
 	}
 	
+	public void askForServer(String hostLB, int port) {
+		ask = new ServerAsk(this, hostLB, port);
+
+		ThreadPoolManager.getInstance().getExecutorService().execute(ask);
+	}
+		
 	public void connect(String host, int port) {
 		//TODO: mudar aqui pra impl certa
+				
+		if (ask.gotServer)
+			return;
+		
+		ask.gotServer = true;
 		
 		try {
 			serverConnection = new TCPConnection(new Socket(host, port));
@@ -43,7 +56,7 @@ public class Client implements MessageListener {
 	}
 	
 	public void signUp(String user, String password) {
-		Message msg = new Message("SignUp", user, Encrypter.encrypt(password));
+		Message msg = new Message("SignUp", user, password);
 		
 		serverConnection.sendMessage(msg);
 	}
@@ -134,5 +147,58 @@ public class Client implements MessageListener {
 	public void messageReceived(Message message) {
 		message.setConnection(serverConnection);
 		MessageParser.parseMessage(new MessageContext(message, null, this));
+	}
+	
+	private class ServerAsk implements Runnable, MessageListener {
+
+		private String hostLB;
+		private int port;
+		private volatile boolean gotServer;
+		private Client client;
+		private Connection loadBalancerConn = null;
+		
+		public ServerAsk(Client client, String hostLB, int port) {
+			this.hostLB = hostLB;
+			this.port = port;
+			this.client = client;
+		}
+
+		@Override
+		public void messageReceived(Message message) {
+			message.setConnection(loadBalancerConn);
+			MessageParser.parseMessage(new MessageContext(message, null, client));
+		}
+
+		@Override
+		public void run() {
+
+			while (loadBalancerConn == null) {
+				try {
+					loadBalancerConn = new TCPConnection(new Socket(hostLB, port));
+				} catch (Exception e) {
+					Thread.yield();
+					TextAreaLogger.getInstance().log("Retrying conection...");
+					continue;
+				}
+			}
+			
+			loadBalancerConn.openConnection();
+			loadBalancerConn.setMessageListener(this);
+			loadBalancerConn.listen();
+			
+			while (!gotServer) {
+				loadBalancerConn.sendMessage(new Message("NeedServer"));
+				TextAreaLogger.getInstance().log("Asking for a server...");
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}		
+			
+			loadBalancerConn.closeConnection();
+		}
+		
 	}
 }

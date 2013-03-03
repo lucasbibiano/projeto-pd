@@ -22,7 +22,7 @@ public class UDPConnection extends Connection {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public void sendMessage(Message message) {		
 		DatagramPacket packet = new DatagramPacket(buf, buf.length, getHost(), getPort());
@@ -66,6 +66,8 @@ public class UDPConnection extends Connection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
+		
+		socket.close();
 	}
 
 	@Override

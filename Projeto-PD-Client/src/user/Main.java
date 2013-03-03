@@ -12,7 +12,7 @@ public class Main {
 	public Main() {
 		in = new Scanner(System.in);
 		client = new Client();
-		client.connect("127.0.0.1", 3334);
+		client.askForServer("127.0.0.1", 5333);
 
 		while (true) {
 			printMenu();

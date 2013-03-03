@@ -1,11 +1,16 @@
 package server.core;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import network.Connection;
 import network.ConnectionListener;
 import network.ConnectionManager;
+import network.Message;
+import network.MessageListener;
+import network.TCPConnection;
 import network.TCPConnectionManager;
 import system.core.User;
 import utils.ConfigManager;
@@ -14,7 +19,10 @@ import utils.TextAreaLogger;
 public class Server implements ConnectionListener {
 	private ConnectionManager listener;
 	
+	private Connection loadBalancerConnection;
+	
 	private UserConnection[] connections;
+	private int port;
 		
 	private int next;
 	private int capacity;
@@ -24,7 +32,7 @@ public class Server implements ConnectionListener {
 	}
 	
 	public void start() {
-		int port = (Integer) ConfigManager.getConfig("server_port"); 
+		port = (Integer) ConfigManager.getConfig("server_port"); 
 		
 		capacity = (Integer) ConfigManager.getConfig("server_capacity");
 		next = 0;
@@ -32,26 +40,51 @@ public class Server implements ConnectionListener {
 		connections = new UserConnection[capacity];
 		
 		//TODO: mudar aqui que conexao abrir
-
-		/* TCP
 		try {
 			listener = new TCPConnectionManager(new ServerSocket(port));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
 		
-		try {
-			listener = new TCPConnectionManager(new ServerSocket(port));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		tellLoadBalancer("127.0.0.1", 5333);
 		
 		listener.setConnectionListener(this);
 		
-		TextAreaLogger.getInstance().log("Starting server...");
+		TextAreaLogger.getInstance().log("Starting server on port " + port + "...");
 				
 		listener.listenForConnections();
+	}
+	
+	private void tellLoadBalancer(String host, int port) {
+		
+		try {
+			loadBalancerConnection = new TCPConnection(new Socket(host, port));
+			loadBalancerConnection.openConnection();
+			loadBalancerConnection.listen();
+			
+			loadBalancerConnection.setMessageListener(new MessageListener() {
+				
+				@Override
+				public void messageReceived(Message message) {
+					if (message.getCommand().equals("OK")) {
+						loadBalancerConnection.closeConnection();
+						return;
+					}
+				}
+			});
+			
+			loadBalancerConnection.sendMessage(new Message("RegisterAsServer", "senha_secreta",
+				String.valueOf(capacity), InetAddress.getLocalHost().getHostAddress(), String.valueOf(this.port)));
+		} catch (Exception e) {
+			TextAreaLogger.getInstance().log("Trying to registrate as a server...");
+			Thread.yield();
+			tellLoadBalancer(host, port);
+			return;
+		}
+	}
+	
+	public void close() {
+		loadBalancerConnection.closeConnection();
 	}
 	
 	@Override

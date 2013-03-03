@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 @SuppressWarnings("serial")
 public class TextAreaLogger extends JFrame {
@@ -25,7 +26,12 @@ public class TextAreaLogger extends JFrame {
 		
 		setPreferredSize(getSize());
 		
-		add(new JScrollPane(textArea), BorderLayout.CENTER);
+		JScrollPane scroll = new JScrollPane(textArea);
+		
+		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
+		add(scroll, BorderLayout.CENTER);
 				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

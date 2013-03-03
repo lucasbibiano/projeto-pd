@@ -3,6 +3,7 @@ package system.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import utils.Encrypter;
 import utils.TextAreaLogger;
 import utils.Tuple;
 
@@ -27,7 +28,7 @@ public class SalesSystem {
 			return false;
 		}
 		
-		User user = new User(name, password);
+		User user = new User(name, Encrypter.encrypt(password));
 
 		if (!users.contains(user)) {
 			users.add(user);
@@ -41,6 +42,8 @@ public class SalesSystem {
 	}
 	
 	public User authenticate(String name, String password) {
+		password = Encrypter.encrypt(password);
+		
 		for (int i = 0; i < users.size(); i++) {
 			User user = users.get(i);
 			
