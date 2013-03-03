@@ -1,7 +1,6 @@
 package lb.messages;
 
 import lb.core.LoadBalancer;
-import network.Connection;
 import network.Message;
 
 public class NotifyNewConnectionMessageHandler implements MessageHandler {
@@ -17,9 +16,8 @@ public class NotifyNewConnectionMessageHandler implements MessageHandler {
 		String[] params = message.getParams();
 		
 		LoadBalancer lb = context.getLoadBalancer();
-		Connection conn = context.getMessage().getConnection();
 		
-		lb.newConnectionOnServer(conn, params[0]);
+		lb.newConnectionOnServer(params[0], params[1]);
 		
 		return true;		
 	}

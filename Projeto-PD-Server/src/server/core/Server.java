@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import network.Connection;
 import network.ConnectionListener;
@@ -94,6 +95,14 @@ public class Server implements ConnectionListener {
 	public void newConnection(Connection connection) {		
 		connections[next] = new UserConnection(this, connection);
 			
+		try {
+			loadBalancerConnection.sendMessage(new Message("NotifyNewConnection",
+				InetAddress.getLocalHost().getHostAddress() + ":" + String.valueOf(this.port),
+				connection.getHost().getHostAddress() + ":" + connection.getPort()));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
 		TextAreaLogger.getInstance().log("Conexão aceita de " + connection.getHost().toString() +
 			" na porta " + connection.getPort());
 				
@@ -115,7 +124,7 @@ public class Server implements ConnectionListener {
 		for (int i = 0; i < next; i++) {
 			if (conn.equals(connections[i].getConnection())) {
 				connections[i].setUser(user);
-					
+				
 				break;
 			}
 		}
@@ -125,6 +134,14 @@ public class Server implements ConnectionListener {
 		for (int i = 0; i < next; i++) {
 			if (connections[i].getUser().equals(user)) {
 				connections[i].setUser(null);
+						
+				try {
+					loadBalancerConnection.sendMessage(new Message("NotifyConnectionClosed",
+						InetAddress.getLocalHost().getHostAddress() + ":" + String.valueOf(this.port),
+						user.getName()));
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
 								
 				break;
 			}

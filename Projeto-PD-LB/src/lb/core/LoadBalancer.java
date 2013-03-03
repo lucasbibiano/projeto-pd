@@ -30,7 +30,7 @@ public class LoadBalancer implements ConnectionListener {
 	
 	public LoadBalancer() {
 		port = (Integer) ConfigManager.getConfig("port"); 
-		
+				
 		connections = new ArrayList<Connection>();
 		serverConnections = new ArrayList<ServerConnection>();
 		loadBalancerConnections = new ArrayList<Connection>();
@@ -45,6 +45,8 @@ public class LoadBalancer implements ConnectionListener {
 		
 		TextAreaLogger.getInstance().log("Iniciando LB...");
 				
+		registerAsLB();
+		
 		listener.listenForConnections();
 	}
 	
@@ -57,19 +59,29 @@ public class LoadBalancer implements ConnectionListener {
 		serverConnections.add(sConn);		
 	}
 
-	public void newConnectionOnServer(Connection conn, String user) {
+	public void newConnectionOnServer(String serverAddress, String user) {	
 		for (ServerConnection server: serverConnections) {
-			if (server.getConnection().equals(conn)) {
+			String temp = server.getServerIP() + ":" + server.getServerPort();
+			
+			if (temp.equals(serverAddress)) {
 				server.newConnectedUser(user);
+				
+				TextAreaLogger.getInstance().log("Nova conexao no servidor " + temp);
+				
 				break;
 			}
 		}
 	}
 
-	public void closedConnectionOnServer(Connection conn, String user) {
+	public void closedConnectionOnServer(String serverAddress, String user) {
 		for (ServerConnection server: serverConnections) {
-			if (server.getConnection().equals(conn)) {
+			String temp = server.getServerIP() + ":" + server.getServerPort();
+			
+			if (temp.equals(serverAddress)) {
 				server.disconnectedUser(user);
+				
+				TextAreaLogger.getInstance().log("Conexão encerrada no servidor " + temp);
+				
 				break;
 			}
 		}
@@ -97,7 +109,7 @@ public class LoadBalancer implements ConnectionListener {
 		return servers;
 	}
 	
-	public String suggestServer() {
+	public synchronized String suggestServer() {
 		for (ServerConnection server: serverConnections) {
 			if (server.getUsersConnectedNum() < server.getCapacity()) {
 				return server.getServerIP() + ":" + server.getServerPort();
