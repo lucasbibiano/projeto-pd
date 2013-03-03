@@ -33,8 +33,11 @@ public class Server implements ConnectionListener {
 	
 	public void start() {
 		port = (Integer) ConfigManager.getConfig("server_port"); 
-		
 		capacity = (Integer) ConfigManager.getConfig("server_capacity");
+		
+		String loadBalancerAddress = (String) ConfigManager.getConfig("lb_address");
+		int loadBalancerPort = (Integer) ConfigManager.getConfig("lb_port");
+
 		next = 0;
 		
 		connections = new UserConnection[capacity];
@@ -46,11 +49,11 @@ public class Server implements ConnectionListener {
 			e.printStackTrace();
 		}
 		
-		tellLoadBalancer("127.0.0.1", 5333);
+		TextAreaLogger.getInstance().log("Iniciando servidor na porta " + port + "...");
+		
+		tellLoadBalancer(loadBalancerAddress, loadBalancerPort);
 		
 		listener.setConnectionListener(this);
-		
-		TextAreaLogger.getInstance().log("Starting server on port " + port + "...");
 				
 		listener.listenForConnections();
 	}
@@ -76,7 +79,7 @@ public class Server implements ConnectionListener {
 			loadBalancerConnection.sendMessage(new Message("RegisterAsServer", "senha_secreta",
 				String.valueOf(capacity), InetAddress.getLocalHost().getHostAddress(), String.valueOf(this.port)));
 		} catch (Exception e) {
-			TextAreaLogger.getInstance().log("Trying to registrate as a server...");
+			TextAreaLogger.getInstance().log("Tentando se registrar como servidor...");
 			Thread.yield();
 			tellLoadBalancer(host, port);
 			return;
@@ -91,8 +94,8 @@ public class Server implements ConnectionListener {
 	public void newConnection(Connection connection) {		
 		connections[next] = new UserConnection(this, connection);
 			
-		TextAreaLogger.getInstance().log("Accepted connection from " + connection.getHost().toString() +
-			" on port " + connection.getPort());
+		TextAreaLogger.getInstance().log("Conexão aceita de " + connection.getHost().toString() +
+			" na porta " + connection.getPort());
 				
 		next++;
 	}

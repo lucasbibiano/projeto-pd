@@ -3,7 +3,6 @@ package user;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 import network.Connection;
 import network.Message;
@@ -14,18 +13,15 @@ import user.messages.MessageContext;
 import system.core.Item;
 import user.messages.MessageParser;
 import utils.Encrypter;
-import utils.TextAreaLogger;
 
 public class Client implements MessageListener {
 	private Connection serverConnection;
 	
-	private ArrayList<Integer> waitingConfirmPackets;
 	
 	private ServerAsk ask;
 	
 	public Client() {
-		TextAreaLogger.getInstance().log("Starting client...");
-		waitingConfirmPackets = new ArrayList<Integer>();
+		System.out.println("Inciando cliente...");
 	}
 	
 	public void askForServer(String hostLB, int port) {
@@ -39,6 +35,8 @@ public class Client implements MessageListener {
 				
 		if (ask.gotServer)
 			return;
+		
+		System.out.println("Servidor encontrado");
 		
 		ask.gotServer = true;
 		
@@ -95,12 +93,11 @@ public class Client implements MessageListener {
 	}
 	
 	public void showMyItens() {
-		TextAreaLogger.getInstance().log("========== Minha loja ==========");
-		TextAreaLogger.getInstance().log("Descrição\t\t\tPreço\tAnunciante");
+		System.out.println("========== Minha loja ==========");
+		System.out.println("Descrição\t\t\tPreço\tAnunciante");
 
 		serverConnection.sendMessage(new Message("ShowMyItens"));
 		
-		//pra dar tempo dos itens chegaram, gambiarra, mas o que eu posso fazer?
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -109,11 +106,10 @@ public class Client implements MessageListener {
 	}
 	
 	public void showItens(String user) {
-		TextAreaLogger.getInstance().log("========== Loja " + user + " ==========");
-		TextAreaLogger.getInstance().log("Descrição\t\t\tPreço\tAnunciante");
+		System.out.println("========== Loja " + user + " ==========");
+		System.out.println("Descrição\t\t\tPreço\tAnunciante");
 		serverConnection.sendMessage(new Message("ShowItens", user));
 		
-		//pra dar tempo dos itens chegaram, gambiarra, mas o que eu posso fazer?
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -122,12 +118,11 @@ public class Client implements MessageListener {
 	}
 	
 	public void searchItens(String search) {
-		TextAreaLogger.getInstance().log("========== Resultados da pesquisa ==========");
-		TextAreaLogger.getInstance().log("Descrição\t\t\tPreço\tAnunciante");
+		System.out.println("========== Resultados da pesquisa ==========");
+		System.out.println("Descrição\t\t\tPreço\tAnunciante");
 		
 		serverConnection.sendMessage(new Message("SearchItens", search));
 		
-		//pra dar tempo dos itens chegaram, gambiarra, mas o que eu posso fazer?
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -138,10 +133,7 @@ public class Client implements MessageListener {
 	public void waitItens(int numItens) {
 	
 	}
-	
-	public void waitConfirm(int id) {
-		waitingConfirmPackets.add(id);
-	}
+
 	
 	@Override
 	public void messageReceived(Message message) {
@@ -177,7 +169,7 @@ public class Client implements MessageListener {
 					loadBalancerConn = new TCPConnection(new Socket(hostLB, port));
 				} catch (Exception e) {
 					Thread.yield();
-					TextAreaLogger.getInstance().log("Retrying conection...");
+					System.out.println("Retrying conection...");
 					continue;
 				}
 			}
@@ -188,7 +180,7 @@ public class Client implements MessageListener {
 			
 			while (!gotServer) {
 				loadBalancerConn.sendMessage(new Message("NeedServer"));
-				TextAreaLogger.getInstance().log("Asking for a server...");
+				System.out.println("Procurando servidor...");
 				
 				try {
 					Thread.sleep(1000);

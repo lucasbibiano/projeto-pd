@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import lb.messages.MessageContext;
 import lb.messages.MessageParser;
 
+import utils.ConfigManager;
 import utils.TextAreaLogger;
 
 import network.Connection;
@@ -25,26 +26,30 @@ public class LoadBalancer implements ConnectionListener {
 	
 	private ArrayList<Connection> connections;
 	
+	private int port;
+	
 	public LoadBalancer() {
+		port = (Integer) ConfigManager.getConfig("port"); 
+		
 		connections = new ArrayList<Connection>();
 		serverConnections = new ArrayList<ServerConnection>();
 		loadBalancerConnections = new ArrayList<Connection>();
 		
 		try {
-			listener = new TCPConnectionManager(new ServerSocket(5333));
+			listener = new TCPConnectionManager(new ServerSocket(port));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		listener.setConnectionListener(this);
 		
-		TextAreaLogger.getInstance().log("Starting LB...");
+		TextAreaLogger.getInstance().log("Iniciando LB...");
 				
 		listener.listenForConnections();
 	}
 	
 	public void authenticateServer(Connection conn, int capacity, String ip, int port) {
-		TextAreaLogger.getInstance().log("Server registered: " + ip + ":" + port);
+		TextAreaLogger.getInstance().log("Servidor registrado: " + ip + ":" + port);
 		
 		ServerConnection sConn = new ServerConnection(this, conn, ip, port);
 		sConn.setCapacity(capacity);

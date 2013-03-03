@@ -14,7 +14,6 @@ public abstract class Connection {
 	
 	private HashMap<Integer, Message> messagesWaitingConfirm;
 
-	
 	public Connection(String host, int port) {
 		try {
 			this.host = InetAddress.getByName(host);

@@ -58,9 +58,7 @@ public class UDPConnection extends Connection {
 		Message message = new Message("Disconnect");
 
 		packet.setData(message.toString().getBytes());
-		
-		addToWaitingMessages(message);
-		
+				
 		try {
 			socket.send(packet);
 		} catch (IOException e) {

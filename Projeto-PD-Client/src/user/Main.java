@@ -3,6 +3,7 @@ package user;
 import java.util.Scanner;
 
 import system.core.Item;
+import utils.ConfigManager;
 
 public class Main {
 	
@@ -10,9 +11,13 @@ public class Main {
 	private Client client;
 	
 	public Main() {
+		
+		int loadBalancerPort = (Integer) ConfigManager.getConfig("lb_port");
+		String loadBalancerAddress = (String) ConfigManager.getConfig("lb_address");
+		
 		in = new Scanner(System.in);
 		client = new Client();
-		client.askForServer("127.0.0.1", 5333);
+		client.askForServer(loadBalancerAddress, loadBalancerPort);
 
 		while (true) {
 			printMenu();
@@ -26,8 +31,12 @@ public class Main {
 	
 	/**
 	 * @param args
+	 * @throws UnsupportedEncodingException 
 	 */
 	public static void main(String[] args) {
+		ConfigManager.addConfig("lb_address", args[0]);
+		ConfigManager.addConfig("lb_port", Integer.parseInt(args[1]));
+		
 		new Main();		
 	}
 	
@@ -120,7 +129,7 @@ public class Main {
 		int price = in.nextInt();
 		in.nextLine();
 		
-		client.editItem(itemDesc, new Item(newItemDesc, price));		
+		client.editItem(itemDesc, new Item(newItemDesc, price));	
 	}
 
 	private void addItem() {
