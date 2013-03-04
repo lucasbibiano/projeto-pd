@@ -1,7 +1,6 @@
 package lb.core;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 
 import lb.messages.MessageContext;
@@ -11,11 +10,11 @@ import utils.ConfigManager;
 import utils.TextAreaLogger;
 
 import network.Connection;
+import network.ConnectionFactory;
 import network.ConnectionListener;
 import network.ConnectionManager;
 import network.Message;
 import network.MessageListener;
-import network.TCPConnectionManager;
 
 public class LoadBalancer implements ConnectionListener {
 	
@@ -36,7 +35,7 @@ public class LoadBalancer implements ConnectionListener {
 		loadBalancerConnections = new ArrayList<Connection>();
 		
 		try {
-			listener = new TCPConnectionManager(new ServerSocket(port));
+			listener = ConnectionFactory.getConnectionManagerImplByConfig(port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

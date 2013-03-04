@@ -37,6 +37,8 @@ public class Main {
 		ConfigManager.addConfig("lb_address", args[0]);
 		ConfigManager.addConfig("lb_port", Integer.parseInt(args[1]));
 		
+		ConfigManager.addConfig("protocol", args[2]);
+		
 		new Main();		
 	}
 	

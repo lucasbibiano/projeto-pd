@@ -1,13 +1,12 @@
 package user;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
 import network.Connection;
+import network.ConnectionFactory;
 import network.Message;
 import network.MessageListener;
-import network.TCPConnection;
 import threading.ThreadPoolManager;
 import user.messages.MessageContext;
 import system.core.Item;
@@ -41,7 +40,7 @@ public class Client implements MessageListener {
 		ask.gotServer = true;
 		
 		try {
-			serverConnection = new TCPConnection(new Socket(host, port));
+			serverConnection = ConnectionFactory.getConnectionImplByConfig(host, port);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -94,7 +93,7 @@ public class Client implements MessageListener {
 	
 	public void showMyItens() {
 		System.out.println("========== Minha loja ==========");
-		System.out.println("Descrição\t\t\tPreço\tAnunciante");
+		System.out.printf("%-32s%-10s%-16s%n", "Descrição", "Preço", "Anunciante");
 
 		serverConnection.sendMessage(new Message("ShowMyItens"));
 		
@@ -107,7 +106,7 @@ public class Client implements MessageListener {
 	
 	public void showItens(String user) {
 		System.out.println("========== Loja " + user + " ==========");
-		System.out.println("Descrição\t\t\tPreço\tAnunciante");
+		System.out.printf("%-32s$%-10s%-16s%n", "Descrição", "Preço", "Anunciante");
 		serverConnection.sendMessage(new Message("ShowItens", user));
 		
 		try {
@@ -119,7 +118,7 @@ public class Client implements MessageListener {
 	
 	public void searchItens(String search) {
 		System.out.println("========== Resultados da pesquisa ==========");
-		System.out.println("Descrição\t\t\tPreço\tAnunciante");
+		System.out.printf("%-32s$%-10s%-16s%n", "Descrição", "Preço", "Anunciante");
 		
 		serverConnection.sendMessage(new Message("SearchItens", search));
 		
@@ -166,10 +165,10 @@ public class Client implements MessageListener {
 
 			while (loadBalancerConn == null) {
 				try {
-					loadBalancerConn = new TCPConnection(new Socket(hostLB, port));
+					loadBalancerConn = ConnectionFactory.getConnectionImplByConfig(hostLB, port);
 				} catch (Exception e) {
 					Thread.yield();
-					System.out.println("Retrying conection...");
+					System.out.println("Tentando novamente...");
 					continue;
 				}
 			}

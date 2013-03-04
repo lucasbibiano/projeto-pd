@@ -93,11 +93,27 @@ public class SalesSystem {
 		return user.getItensSelling();
 	}
 	
-	public void addItemToUser(User user, Item item) {
+	public boolean addItemToUser(User user, Item item) {
+		
+		if (item.getDescription().isEmpty())
+			return false;
+		
+		Iterator<Item> itens = user.getItensSelling();
+		
+		while (itens.hasNext()) {
+			Item it = itens.next();
+			
+			if (it.equals(item)) {
+				return false;
+			}
+		}
+		
 		user.addItemToSellingItens(item);
 		
 		TextAreaLogger.getInstance().log("Item " + item.getDescription() + " adicionado a "
 			+ user.getName());
+		
+		return true;
 	}
 	
 	public void removeItemFromUser(User user, String itemDesc) {

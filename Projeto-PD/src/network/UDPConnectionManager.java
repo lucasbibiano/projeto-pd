@@ -35,13 +35,13 @@ public class UDPConnectionManager extends ConnectionManager {
 																					
 						if (msg.getCommand().equals("Connect")) {
 							Connection conn = new UDPConnection(packet.getAddress().getHostAddress(),
-								packet.getPort(), 1024);
+								packet.getPort(), 2048);
 							addConnection(conn);
 							getConnectionListener().newConnection(conn);
 						}	
 						else if (msg.getCommand().equals("Disconnect")) {
 							getConnectionListener().connectionClosed(new UDPConnection(packet.getAddress().getHostAddress(),
-								packet.getPort(), 1024));
+								packet.getPort(), 2048));
 						}
 						else {
 							Iterator<Connection> conns = getConnections();

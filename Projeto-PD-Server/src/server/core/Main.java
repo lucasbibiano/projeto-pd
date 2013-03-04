@@ -15,6 +15,8 @@ public class Main {
 		ConfigManager.addConfig("lb_address", args[2]);
 		ConfigManager.addConfig("lb_port", Integer.parseInt(args[3]));
 		
+		ConfigManager.addConfig("protocol", args[2]);
+		
 		Server server = new Server();
 		server.start();
 	}

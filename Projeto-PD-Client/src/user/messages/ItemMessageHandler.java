@@ -20,8 +20,7 @@ public class ItemMessageHandler implements MessageHandler {
 		
 		Item item = new Item(params[0], Integer.parseInt(params[1]));	
 		
-		System.out.println(item.getDescription() + "\t\t\t$" + item.getPrice() + "\t" +
-			params[2]);
+		System.out.printf("%-32s%-10s%-16s%n", item.getDescription(), "$" + item.getPrice(), params[2]);
 				
 		message.getConnection().sendMessage(new Message("OK", String.valueOf(message.getID())));
 		

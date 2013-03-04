@@ -2,19 +2,16 @@ package server.core;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import network.Connection;
+import network.ConnectionFactory;
 import network.ConnectionListener;
 import network.ConnectionManager;
 import network.Message;
 import network.MessageListener;
-import network.TCPConnection;
-import network.TCPConnectionManager;
 import server.messages.MessageContext;
 import server.messages.MessageParser;
 import system.core.Item;
@@ -49,9 +46,8 @@ public class Server implements ConnectionListener {
 		
 		connections = new UserConnection[capacity];
 		
-		//TODO: mudar aqui que conexao abrir
 		try {
-			listener = new TCPConnectionManager(new ServerSocket(port));
+			listener = ConnectionFactory.getConnectionManagerImplByConfig(port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -70,7 +66,7 @@ public class Server implements ConnectionListener {
 		try {
 			final Server server = this;
 			
-			loadBalancerConnection = new TCPConnection(new Socket(host, port));
+			loadBalancerConnection = ConnectionFactory.getConnectionImplByConfig(host, port);
 			loadBalancerConnection.openConnection();
 			loadBalancerConnection.listen();
 			
