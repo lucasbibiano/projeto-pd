@@ -33,4 +33,17 @@ public class Item {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	@Override
+	public boolean equals(Object another) {
+		Item item = (Item) another;
+		
+		return item.getDescription().equals(getDescription()) &&
+			item.getPrice() == getPrice() && item.getUser().equals(getUser());
+	}
+	
+	@Override
+	public String toString() {
+		return getDescription() + ";" + getPrice() + ";" + getUser().getName();
+	}
 }

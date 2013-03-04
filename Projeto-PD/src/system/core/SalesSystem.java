@@ -33,7 +33,7 @@ public class SalesSystem {
 		if (!users.contains(user)) {
 			users.add(user);
 			
-			TextAreaLogger.getInstance().log("Created user " + user.getName());
+			TextAreaLogger.getInstance().log("Usuário criado " + user.getName());
 
 			return true;
 		}		
@@ -96,7 +96,8 @@ public class SalesSystem {
 	public void addItemToUser(User user, Item item) {
 		user.addItemToSellingItens(item);
 		
-		TextAreaLogger.getInstance().log("Added item " + item.getDescription() + " to user " + user.getName());
+		TextAreaLogger.getInstance().log("Item " + item.getDescription() + " adicionado a "
+			+ user.getName());
 	}
 	
 	public void removeItemFromUser(User user, String itemDesc) {

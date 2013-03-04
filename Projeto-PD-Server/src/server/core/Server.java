@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import network.Connection;
 import network.ConnectionListener;
@@ -13,6 +15,10 @@ import network.Message;
 import network.MessageListener;
 import network.TCPConnection;
 import network.TCPConnectionManager;
+import server.messages.MessageContext;
+import server.messages.MessageParser;
+import system.core.Item;
+import system.core.SalesSystem;
 import system.core.User;
 import utils.ConfigManager;
 import utils.TextAreaLogger;
@@ -62,6 +68,8 @@ public class Server implements ConnectionListener {
 	private void tellLoadBalancer(String host, int port) {
 		
 		try {
+			final Server server = this;
+			
 			loadBalancerConnection = new TCPConnection(new Socket(host, port));
 			loadBalancerConnection.openConnection();
 			loadBalancerConnection.listen();
@@ -70,15 +78,14 @@ public class Server implements ConnectionListener {
 				
 				@Override
 				public void messageReceived(Message message) {
-					if (message.getCommand().equals("OK")) {
-						loadBalancerConnection.closeConnection();
-						return;
-					}
+					message.setConnection(loadBalancerConnection);
+					MessageParser.parseMessage(new MessageContext(message, null, server));
 				}
 			});
 			
 			loadBalancerConnection.sendMessage(new Message("RegisterAsServer", "senha_secreta",
 				String.valueOf(capacity), InetAddress.getLocalHost().getHostAddress(), String.valueOf(this.port)));
+			
 		} catch (Exception e) {
 			TextAreaLogger.getInstance().log("Tentando se registrar como servidor...");
 			Thread.yield();
@@ -118,6 +125,32 @@ public class Server implements ConnectionListener {
 				break;
 			}
 		}
+	}
+	
+	public void sendData() {
+		Iterator<User> users = SalesSystem.getInstance().getAllUsers();
+		ArrayList<String> usersResult = new ArrayList<String>();
+		ArrayList<String> itensResult = new ArrayList<String>();
+		
+		usersResult.add("Users");
+		itensResult.add("Itens");
+		
+		while (users.hasNext()) {
+			User user = users.next();
+			usersResult.add(user.toString());
+			
+			Iterator<Item> itens = user.getItensSelling();
+			
+			while (itens.hasNext()) {
+				Item item = itens.next();
+				itensResult.add(item.toString());
+			}
+		}
+		
+		loadBalancerConnection.sendMessage(new Message("BroadcastServerMessage",
+			usersResult.toArray(new String[usersResult.size()])));		
+		loadBalancerConnection.sendMessage(new Message("BroadcastServerMessage", 
+			itensResult.toArray(new String[itensResult.size()])));
 	}
 	
 	public void authenticateConnection(Connection conn, User user) {

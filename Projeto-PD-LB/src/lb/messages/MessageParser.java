@@ -14,6 +14,7 @@ public class MessageParser {
 		chain.add(new NotifyConnectionClosedMessageHandler());
 		chain.add(new NotifyNewConnectionMessageHandler());
 		chain.add(new SendAllActiveServersMessageHandler());
+		chain.add(new BroadcastServerMessageMessageHandler());
 		//...other handlers
 	}
 	

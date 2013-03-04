@@ -19,6 +19,9 @@ public class MessageParser {
 		chain.add(new ShowItensMessageHandler());
 		chain.add(new ShowMyItensMessageHandler());
 		chain.add(new SearchItensMessageHandler());
+		chain.add(new UsersMessageHandler());
+		chain.add(new ItensMessageHandler());
+		chain.add(new GetDataMessageHandler());
 		//...other handlers
 	}
 	

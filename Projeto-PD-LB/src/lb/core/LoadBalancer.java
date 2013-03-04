@@ -55,8 +55,12 @@ public class LoadBalancer implements ConnectionListener {
 		
 		ServerConnection sConn = new ServerConnection(this, conn, ip, port);
 		sConn.setCapacity(capacity);
+	
+		serverConnections.add(sConn);
 		
-		serverConnections.add(sConn);		
+		if (!(serverConnections.size() != 1)) {
+			serverConnections.get(0).getConnection().sendMessage(new Message("GetData"));
+		}
 	}
 
 	public void newConnectionOnServer(String serverAddress, String user) {	
@@ -162,5 +166,11 @@ public class LoadBalancer implements ConnectionListener {
 	@Override
 	public void connectionClosed(Connection connection) {
 		connections.remove(connection);
+	}
+
+	public void broadcastServerMessage(Message message) {
+		for (ServerConnection server: serverConnections) {
+			server.getConnection().sendMessage(message);
+		}
 	}
 }

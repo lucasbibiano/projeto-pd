@@ -9,7 +9,6 @@ public class AddItemMessageHandler implements MessageHandler {
 
 	@Override
 	public boolean handleMessage(MessageContext context) {
-		
 		Message message = context.getMessage();
 
 		if (!message.getCommand().equals("AddItem")) {
@@ -22,6 +21,8 @@ public class AddItemMessageHandler implements MessageHandler {
 		User user = context.getUser();
 		
 		SalesSystem.getInstance().addItemToUser(user, item);
+		
+		context.getServer().sendData();
 		
 		message.getConnection().sendMessage(new Message("OK", String.valueOf(message.getID())));
 		

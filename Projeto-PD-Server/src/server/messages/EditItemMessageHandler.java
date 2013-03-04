@@ -22,6 +22,8 @@ public class EditItemMessageHandler implements MessageHandler {
 		
 		SalesSystem.getInstance().editUserItem(user, params[0], item);
 		
+		context.getServer().sendData();
+		
 		message.getConnection().sendMessage(new Message("OK", String.valueOf(message.getID())));
 		
 		return true;

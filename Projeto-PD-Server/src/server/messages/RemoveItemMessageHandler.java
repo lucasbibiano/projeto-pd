@@ -24,6 +24,8 @@ public class RemoveItemMessageHandler implements MessageHandler {
 		
 		SalesSystem.getInstance().removeItemFromUser(user, params[0]);
 		
+		context.getServer().sendData();
+		
 		message.getConnection().sendMessage(new Message("OK", String.valueOf(message.getID())));
 		
 		return true;	
