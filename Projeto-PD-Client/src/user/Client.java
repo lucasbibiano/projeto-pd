@@ -30,7 +30,6 @@ public class Client implements MessageListener {
 	}
 		
 	public void connect(String host, int port) {
-		//TODO: mudar aqui pra impl certa
 				
 		if (ask.gotServer)
 			return;
@@ -42,9 +41,7 @@ public class Client implements MessageListener {
 		try {
 			serverConnection = ConnectionFactory.getConnectionImplByConfig(host, port);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		serverConnection.openConnection();
@@ -100,7 +97,6 @@ public class Client implements MessageListener {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -112,7 +108,6 @@ public class Client implements MessageListener {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -125,7 +120,6 @@ public class Client implements MessageListener {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -184,7 +178,6 @@ public class Client implements MessageListener {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}		
 			

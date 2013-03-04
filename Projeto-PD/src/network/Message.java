@@ -45,9 +45,7 @@ public class Message implements Serializable{
 	
 	public static Message stringToMessage(String string){
 		String[] split = string.split("\\>");
-		
-		TextAreaLogger.getInstance().log(string);
-				
+						
 		int id = Integer.parseInt(split[0]);
 		string = split[1];
 		

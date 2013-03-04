@@ -6,7 +6,6 @@ import network.MessageListener;
 import server.messages.MessageContext;
 import server.messages.MessageParser;
 import system.core.User;
-import utils.TextAreaLogger;
 
 public class UserConnection implements MessageListener {
 	private Connection connection;
@@ -37,9 +36,7 @@ public class UserConnection implements MessageListener {
 	@Override
 	public void messageReceived(Message message) {
 		message.setConnection(connection);	
-		MessageParser.parseMessage(new MessageContext(message, user, server));
-		
-		TextAreaLogger.getInstance().log(message.toString());
+		MessageParser.parseMessage(new MessageContext(message, user, server));		
 	}
 	
 	public Connection getConnection() {

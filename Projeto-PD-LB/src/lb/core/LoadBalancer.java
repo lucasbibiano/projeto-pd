@@ -37,7 +37,6 @@ public class LoadBalancer implements ConnectionListener {
 		try {
 			listener = ConnectionFactory.getConnectionManagerImplByConfig(port);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		listener.setConnectionListener(this);
@@ -112,11 +111,16 @@ public class LoadBalancer implements ConnectionListener {
 		return servers;
 	}
 	
-	public synchronized String suggestServer() {
+	public String suggestServer() {
 		for (ServerConnection server: serverConnections) {
 			if (server.getUsersConnectedNum() < server.getCapacity()) {
 				return server.getServerIP() + ":" + server.getServerPort();
 			}
+		}
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
 		}
 		
 		return "none";

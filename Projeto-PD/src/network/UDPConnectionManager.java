@@ -57,9 +57,7 @@ public class UDPConnectionManager extends ConnectionManager {
 							}							
 						}
 					} catch (SocketException e) {
-						e.printStackTrace();
 					} catch (IOException e) {
-						e.printStackTrace();
 					}		
 				}
 			}

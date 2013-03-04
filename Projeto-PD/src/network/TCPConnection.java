@@ -27,7 +27,6 @@ public class TCPConnection extends Connection {
 		try {
 			socket.setSoTimeout(300);
 		} catch (SocketException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -38,7 +37,6 @@ public class TCPConnection extends Connection {
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
-			e.printStackTrace();
 		}		
 	}
 
@@ -49,7 +47,6 @@ public class TCPConnection extends Connection {
 			out.write("\n");
 			out.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -87,7 +84,6 @@ public class TCPConnection extends Connection {
 			in.close();
 			socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 

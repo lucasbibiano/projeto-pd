@@ -19,7 +19,6 @@ public abstract class Connection {
 			this.host = InetAddress.getByName(host);
 			this.port = port;
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		}
 		
 		messagesWaitingConfirm = new HashMap<Integer, Message>();
@@ -51,7 +50,6 @@ public abstract class Connection {
 	}
 	
 	public void addToWaitingMessages(Message message) {
-		TextAreaLogger.getInstance().log(message.toString());
 		messagesWaitingConfirm.put(message.getID(), message);
 	}
 	

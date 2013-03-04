@@ -27,7 +27,6 @@ public class TCPConnectionManager extends ConnectionManager {
 						
 						getConnectionListener().newConnection(conn);
 					} catch (IOException e) {
-						e.printStackTrace();
 					}
 				}
 			}

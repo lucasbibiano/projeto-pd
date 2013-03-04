@@ -49,7 +49,6 @@ public class Server implements ConnectionListener {
 		try {
 			listener = ConnectionFactory.getConnectionManagerImplByConfig(port);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		TextAreaLogger.getInstance().log("Iniciando servidor na porta " + port + "...");
@@ -68,19 +67,22 @@ public class Server implements ConnectionListener {
 			
 			loadBalancerConnection = ConnectionFactory.getConnectionImplByConfig(host, port);
 			loadBalancerConnection.openConnection();
-			loadBalancerConnection.listen();
+			
+			Message msg = new Message("RegisterAsServer", "senha_secreta",
+				String.valueOf(capacity), InetAddress.getLocalHost().getHostAddress(), String.valueOf(this.port));
 			
 			loadBalancerConnection.setMessageListener(new MessageListener() {
 				
 				@Override
-				public void messageReceived(Message message) {
+				public void messageReceived(Message message) {					
 					message.setConnection(loadBalancerConnection);
 					MessageParser.parseMessage(new MessageContext(message, null, server));
 				}
 			});
 			
-			loadBalancerConnection.sendMessage(new Message("RegisterAsServer", "senha_secreta",
-				String.valueOf(capacity), InetAddress.getLocalHost().getHostAddress(), String.valueOf(this.port)));
+			loadBalancerConnection.listen();
+			
+			loadBalancerConnection.sendMessage(msg);
 			
 		} catch (Exception e) {
 			TextAreaLogger.getInstance().log("Tentando se registrar como servidor...");
@@ -103,7 +105,6 @@ public class Server implements ConnectionListener {
 				InetAddress.getLocalHost().getHostAddress() + ":" + String.valueOf(this.port),
 				connection.getHost().getHostAddress() + ":" + connection.getPort()));
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		}
 		
 		TextAreaLogger.getInstance().log("Conexão aceita de " + connection.getHost().toString() +
@@ -169,7 +170,6 @@ public class Server implements ConnectionListener {
 						InetAddress.getLocalHost().getHostAddress() + ":" + String.valueOf(this.port),
 						user.getName()));
 				} catch (UnknownHostException e) {
-					e.printStackTrace();
 				}
 								
 				break;
