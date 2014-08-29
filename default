@@ -1,0 +1,29 @@
+                                                                                                                                                                          
+server {                                                                                                                                                                  
+        listen   80; ## listen for ipv4; this line is default and implied                                                                                                 
+                                                                                                                                                                          
+        server_name 4softjr.com.br www.4softjr.com.br;                                                                                                                    
+                                                                                                                                                                          
+                                                                                                                                                                          
+        location / {                                                                                                                                                      
+                proxy_set_header Host $host;                                                                                                                              
+                proxy_set_header X-Real-IP $remote_addr;                                                                                                                  
+                proxy_pass http://localhost:3000;                                                                                                                         
+        }                                                                                                                                                                 
+location ~ ^/(assets)/  {                                                                                                                                                 
+  root /home/deployer/site-4soft/public/;                                                                                                                                 
+  gzip_static on;                                                                                                                                                         
+  expires max;                                                                                                                                                            
+  add_header Cache-Control public;                                                                                                                                        
+  # access_log /dev/null;                                                                                                                                                 
+}                                                                                                                                                                         
+                                                                                                                                                                          
+location ~ ^/(uploads)/  {                                                                                                                                                
+  root /home/deployer/site-4soft/public/;                                                                                                                                 
+  gzip_static on;                                                                                                                                                         
+  expires max;                                                                                                                                                            
+  add_header Cache-Control public;                                                                                                                                        
+  # access_log /dev/null;                                                                                                                                                 
+}                                                                                                                                                                         
+                                                                                                                                                                          
+}                  
